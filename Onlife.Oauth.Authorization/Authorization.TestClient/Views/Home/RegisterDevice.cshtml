@@ -1,0 +1,25 @@
+﻿@model string
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Register Device</title>
+</head>
+<body>
+    <div>
+        <h1>Register Device</h1>
+        @if (Model == null) { <text>Auth Failed!</text> }
+        else { <text>Auth Success!
+<a href="/Home/Logout">Logout</a></text>}
+    </div>
+    <div>Result: @Model</div>
+    <div style="padding-top: 50px;text-align: center;">
+        Msg: @ViewBag.Msg
+    </div>
+</body>
+</html>

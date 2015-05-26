@@ -1,0 +1,145 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Resources</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.1.4.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function executeCall() {
+            var url = $('#labelUrl').val();
+            if (url != '') {
+                $.ajax({
+                    url: '/Home/ExecuteAPICall?apiURL=' + url,
+                    type: 'GET',
+                    success: function (data) {
+
+                        var jData = jQuery.parseJSON(data);
+                        var nHtml = '';
+                        $.each(jData, function (k, v) {
+                            nHtml = '</br >' + k + ' : ' + v;
+                        });
+                        $.each(jData.meta, function (k, v) {
+                            nHtml += '</br >' + k + ' : ' + v;
+                        });
+                        $('#apicallres').html(nHtml);
+                    },
+                    error: function (xhr, error, thrownerror) {
+                        $('#apicallres').html(thrownerror);
+                    }
+                });
+            }
+        }
+
+        function setUrl(id) {
+            if (id == '1') {
+                $('#labelUrl').val('http://localhost:1934/Values/GetNumbers')
+            }
+            else if (id == '2') {
+                $('#labelUrl').val('http://localhost:1934/Values/GetFruits')
+            }
+            else if (id == '3') {
+                $('#labelUrl').val('http://localhost:1934/Values/GetAnimals')
+            }
+        }
+    </script>
+</head>
+<body>
+    <ul class="nav nav-pills">
+        <li role="presentation"><a href="/">Login</a></li>
+        <li role="presentation" class="active"><a href="/Home/Resources">Resources/API's</a></li>
+        <li role="presentation"><a href="#">Clear</a></li>
+    </ul>
+    <div class="row">
+        <div class="col-md-7" style="margin:20px;">
+            <div class="row">
+                <div class="btn-group">
+                    <button type="button" onclick="setUrl('1'); return false;" class="btn btn-primary">Request 1</button>
+                    <button type="button" onclick="setUrl('2'); return false;" class="btn btn-primary">Request 2</button>
+                    <button type="button" class="btn btn-primary" onclick="setUrl('3'); return false;">Request 3</button>
+                </div>
+            </div>
+            @{
+                string apiUrl = System.Configuration.ConfigurationManager.AppSettings["ApiUrl"];
+            }
+            <div class="row" style="margin:20px;">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Request URL : </label>
+                        <input type="text" class="form-control" id="labelUrl" name="labelurl">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="executeCall(); return false;" value="Send">Send Request</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin:20px;">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Response : </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin:20px;">
+                <div class="col-md-12">
+                    <div class="form-group" id="apicallres">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @{
+                string bearerCook = string.Empty;
+                string bearerexp = string.Empty;
+                string refreshcook = string.Empty;
+                string status = "warning";
+                string sucMsg = "No token was created (or) token expired";
+            }
+            @if (Request.Cookies["bearer"] != null)
+            {
+                bearerCook = Request.Cookies["bearer"] != null ? Request.Cookies["bearer"].Value : "";
+                bearerexp = Request.Cookies["bearer"] != null ? Request.Cookies["bearer"].Expires.ToShortDateString() : "";
+                refreshcook = Request.Cookies["bearer_refresh"] != null ? Request.Cookies["bearer_refresh"].Value : "";
+                status = "success";
+                sucMsg = "Success !! Token has been generated for the user";
+
+            }
+            <div class="col-md-12" style="text-align:center"> <h3>Access Token</h3></div>
+            <form action="/Home/RefreshToken" method="POST">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Status : </label>
+                    <span class="label label-@status">@sucMsg</span>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Access Token</label>
+
+                    <input type="text" class="form-control" name="accesstoken" id="accesstoken" value="@bearerCook" placeholder="No Token created" />
+                    <label for="exampleInputEmail1">Access Token Expiry</label>
+                    <input type="text" class="form-control" name="accesstokenexpiry" id="accesstokenexpiry" value="@bearerexp" placeholder="No Token created" />
+
+                </div>
+                <div class="form-group">
+
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Refresh Token</label>
+                    <input type="text" class="form-control" name="refreshtoken" id="refreshtoken" placeholder="No Token created" value="@refreshcook" />
+                </div>
+                <div class="form-group" style="text-align:center">
+                    <input type="submit" class="btn  btn-primary" value="Get Refresh Token" />
+                </div>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>

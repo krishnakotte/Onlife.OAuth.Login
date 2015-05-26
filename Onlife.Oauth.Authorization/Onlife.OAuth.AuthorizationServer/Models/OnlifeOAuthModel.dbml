@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Onlife.OAuth" Class="OnlifeOAuthModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=Krishnak01;Initial Catalog=Onlife.OAuth;Integrated Security=True" SettingsObjectName="Onlife.OAuth.AuthorizationServer.Properties.Settings" SettingsPropertyName="Onlife_OAuthConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.OAuth_Authorization" Member="OAuth_Authorizations">
+    <Type Name="OAuth_Authorization">
+      <Column Name="OAuth_AuthorizationId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ClientId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ResourceId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Scope" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="ExpirationDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="UpdatedDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="OAuth_Client_OAuth_Authorization" Member="OAuth_Client" ThisKey="ClientId" OtherKey="OAuth_ClientId" Type="OAuth_Client" IsForeignKey="true" />
+      <Association Name="OAuth_Resource_OAuth_Authorization" Member="OAuth_Resource" ThisKey="ResourceId" OtherKey="OAuth_ResourceId" Type="OAuth_Resource" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAuth_Client" Member="OAuth_Clients">
+    <Type Name="OAuth_Client">
+      <Column Name="OAuth_ClientId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ClientIdentifier" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="ClientSecret" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="WebsiteUrl" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="RedirectUrl" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="ClientType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="OAuth_Client_OAuth_Authorization" Member="OAuth_Authorizations" ThisKey="OAuth_ClientId" OtherKey="ClientId" Type="OAuth_Authorization" />
+      <Association Name="OAuth_Client_OAuth_ClientScope" Member="OAuth_ClientScopes" ThisKey="OAuth_ClientId" OtherKey="ClientId" Type="OAuth_ClientScope" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAuth_ClientScope" Member="OAuth_ClientScopes">
+    <Type Name="OAuth_ClientScope">
+      <Column Name="ClientId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ScopeIdentifier" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="OAuth_Client_OAuth_ClientScope" Member="OAuth_Client" ThisKey="ClientId" OtherKey="OAuth_ClientId" Type="OAuth_Client" IsForeignKey="true" />
+      <Association Name="OAuth_Scope_OAuth_ClientScope" Member="OAuth_Scope" ThisKey="ScopeIdentifier" OtherKey="Identifier" Type="OAuth_Scope" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAuth_Nonce" Member="OAuth_Nonces">
+    <Type Name="OAuth_Nonce">
+      <Column Name="Context" Type="System.String" DbType="NVarChar(500) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Timestamp" Type="System.DateTime" DbType="DateTime NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAuth_Resource" Member="OAuth_Resources">
+    <Type Name="OAuth_Resource">
+      <Column Name="OAuth_ResourceId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="AuthenticationTokenName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="AuthenticationUrl" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="AuthenticationKey" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="PublicTokenEncryptionKey" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="OAuth_Resource_OAuth_Authorization" Member="OAuth_Authorizations" ThisKey="OAuth_ResourceId" OtherKey="ResourceId" Type="OAuth_Authorization" />
+      <Association Name="OAuth_Resource_OAuth_ResourceScope" Member="OAuth_ResourceScopes" ThisKey="OAuth_ResourceId" OtherKey="ResourceId" Type="OAuth_ResourceScope" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAuth_ResourceScope" Member="OAuth_ResourceScopes">
+    <Type Name="OAuth_ResourceScope">
+      <Column Name="ResourceId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ScopeIdentifier" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="OAuth_Resource_OAuth_ResourceScope" Member="OAuth_Resource" ThisKey="ResourceId" OtherKey="OAuth_ResourceId" Type="OAuth_Resource" IsForeignKey="true" />
+      <Association Name="OAuth_Scope_OAuth_ResourceScope" Member="OAuth_Scope" ThisKey="ScopeIdentifier" OtherKey="Identifier" Type="OAuth_Scope" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAuth_Scope" Member="OAuth_Scopes">
+    <Type Name="OAuth_Scope">
+      <Column Name="Identifier" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="OAuth_Scope_OAuth_ClientScope" Member="OAuth_ClientScopes" ThisKey="Identifier" OtherKey="ScopeIdentifier" Type="OAuth_ClientScope" />
+      <Association Name="OAuth_Scope_OAuth_ResourceScope" Member="OAuth_ResourceScopes" ThisKey="Identifier" OtherKey="ScopeIdentifier" Type="OAuth_ResourceScope" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OAuth_SymmetricCryptoKey" Member="OAuth_SymmetricCryptoKeys">
+    <Type Name="OAuth_SymmetricCryptoKey">
+      <Column Name="Bucket" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Handle" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="ExpiresDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Secret" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+    </Type>
+  </Table>
+</Database>

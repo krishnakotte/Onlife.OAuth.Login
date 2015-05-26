@@ -1,0 +1,24 @@
+﻿@model string
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Home</title>
+</head>
+<body>
+    <div>
+        <h1>Home</h1>
+        Signed In!
+    </div>
+    <div>Result: @Model</div>
+    <a href="/Home/Logout">Logout</a>
+    <div style="padding-top: 50px;text-align: center;">
+        Token Expires: @ViewBag.AuthExpires <a href="/Home/Index?refresh=true">Refresh</a>
+    </div>
+</body>
+</html>

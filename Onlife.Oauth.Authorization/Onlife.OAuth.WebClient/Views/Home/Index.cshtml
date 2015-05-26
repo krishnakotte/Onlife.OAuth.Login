@@ -1,0 +1,142 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Onlife - User Login</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.1.4.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function getClient() {
+            var clients = $('#selClient').val();
+            if (clients != '') {
+                var clientsArray = clients.split('-');
+
+                $('#clientid').val(clientsArray[0]);
+                $('#clientsecret').val(clientsArray[1]);
+            }
+            else {
+                $('#clientid').val('');
+                $('#clientsecret').val('');
+            }
+        }
+        $(document).ready(function () {
+            //$('#accesstoken').val('');
+            //$('#accesstokenexpiry').val('');
+            //$('#refreshtoken').val('');
+        });
+
+    </script>
+</head>
+<body>
+    <ul class="nav nav-pills">
+        <li role="presentation" class="active"><a href="/">Login</a></li>
+        <li role="presentation"><a href="/Home/Resources">Resources/API's</a></li>
+        <li role="presentation"><a href="#">Clear</a></li>
+    </ul>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+            <div class="col-md-12" style="text-align:center"> <h3>Login Page</h3></div>
+            <form action="/Home/StartFlow" method="POST">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Select Client</label>
+                    <select class="form-control" id="selClient" name="selClient" onchange="getClient(); return false;">
+                        <option value="">--Select Client--</option>
+                        <option value="6C9577C8A4E73DDAC48DAA6445BB1-03G7UUyj744bzwJmy8lQbN69tdhekv4a">IOS APP</option>
+                        <option value="No Client Id Exists-No Client Secret Exists">Android App</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">OAuth URL</label>
+                    <input type="text" class="form-control" name="url" id="url" value="@System.Configuration.ConfigurationManager.AppSettings["AuthorizationServerTokenUrl"]" placeholder="No OAuth URL" />
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Client Identifier</label>
+                    <input type="text" class="form-control" name="clientid" id="clientid" placeholder="No Client Id" />
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Client Secret</label>
+                    <input type="text" class="form-control" name="clientsecret" id="clientsecret" placeholder="No Client Secret" />
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Select Scope</label>
+                    <select class="form-control" id="scopes" name="scopes">
+                        <option value="manage">Manage</option>
+                        <option value="web">Basic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Username/Login Id</label>
+                    <input type="text" class="form-control" name="username" placeholder="Enter Login Username" value="krishna" />
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Password</label>
+                    <input type="password" class="form-control" name="password" placeholder="Enter Login Password" value="kotte" />
+                </div>
+                <div class="form-group" style="text-align:center">
+                    <input type="submit" class="btn  btn-primary" value="Sign In" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            @{
+                string bearerCook = string.Empty;
+                string bearerexp = string.Empty;
+                string refreshcook = string.Empty;
+                string status = "warning";
+                string sucMsg = "No token was created (or) token expired";
+            }
+            @if (Request.Cookies["bearer"] != null)
+            {
+                bearerCook = Request.Cookies["bearer"] != null ? Request.Cookies["bearer"].Value : "";
+                bearerexp = Request.Cookies["bearer"] != null ? Request.Cookies["bearer"].Expires.ToShortDateString() : "";
+                refreshcook = Request.Cookies["bearer_refresh"] != null ? Request.Cookies["bearer_refresh"].Value : "";
+                status = "success";
+                sucMsg = "Success !! Token has been generated for the user";
+
+            }
+            <div class="col-md-12" style="text-align:center"> <h3>Login Response</h3></div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Status : </label>
+                <span class="label label-@status">@sucMsg</span>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Access Token</label>
+
+                <input type="text" class="form-control" name="accesstoken" id="accesstoken" value="@bearerCook" placeholder="No Token created" />
+
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Access Token Expiry</label>
+                <input type="text" class="form-control" name="accesstokenexpiry" id="accesstokenexpiry" value="@bearerexp" placeholder="No Token created" />
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Refresh Token</label>
+                <input type="text" class="form-control" name="accesstokenexpiry" id="refreshtoken" placeholder="No Token created" value="@refreshcook" />
+            </div>
+
+        </div>
+        <div class="col-md-2">
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            &nbsp;
+        </div>
+        <div class="col-md-4">
+            &nbsp;
+        </div>
+        <div class="col-md-4">
+            &nbsp;
+        </div>
+    </div>
+</body>
+</html>
